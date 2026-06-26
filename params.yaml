@@ -1,0 +1,17 @@
+extract_features:
+  h3:
+    resolution: 6 
+  ewma:
+    alpha: 0.4
+
+train:
+  model_name: GRU_Medium_Balanced
+  gru_layers: 2
+  gru_units: [128, 64]
+  dense_layers: 2
+  dense_units: [64, 32]
+  dropout: 0.3
+  learning_rate: 0.0005
+  batch_size: 128
+  epochs: 100
+  loss_function: MAPE

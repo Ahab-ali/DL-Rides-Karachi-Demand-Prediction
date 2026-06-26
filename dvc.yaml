@@ -1,0 +1,68 @@
+stages:
+  data_ingestion:
+    cmd: python ./src/data/data_ingestion.py
+    deps:
+      - ./src/data/data_ingestion.py
+
+  extract_features:
+    cmd: python ./src/features/extract_features.py
+    deps:
+      - ./src/features/extract_features.py
+      - ./data/interim/df_without_outliers.csv
+    params:
+      - extract_features.h3.resolution
+      - extract_features.ewma.alpha
+    outs:
+      - ./data/processed/resampled_data.csv
+
+  feature_processing:
+    cmd: python ./src/features/feature_processing.py
+    deps:
+      - ./src/features/feature_processing.py
+      - ./data/processed/resampled_data.csv
+    outs:
+      - ./data/processed/train.csv
+      - ./data/processed/test.csv
+
+  train:
+    cmd: python ./src/models/train.py
+    deps:
+      - ./src/models/train.py
+      - ./data/processed/train.csv
+    params:
+      - train.model_name
+      - train.gru_layers
+      - train.gru_units
+      - train.dense_layers
+      - train.dense_units
+      - train.dropout
+      - train.learning_rate
+      - train.batch_size
+      - train.epochs
+      - train.loss_function
+    outs:
+      - models/model.keras
+      - models/encoder.joblib
+      - models/training_history.json
+      - models/model_metadata.json
+
+  evaluate:
+    cmd: python ./src/models/evaluate.py
+    deps:
+      - ./src/models/evaluate.py
+      - ./data/processed/test.csv
+      - ./data/processed/train.csv
+      - ./models/encoder.joblib
+      - ./models/model.keras
+      - ./models/model_metadata.json
+    outs:
+      - ./run_information.json
+
+  register_model:
+    cmd: python ./src/models/register_model.py
+    deps:
+      - ./src/models/register_model.py
+      - ./run_information.json
+      - ./models/model_metadata.json
+    outs:
+      - ./deployment_info.json
