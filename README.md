@@ -292,6 +292,6 @@ This project helped me practice and understand:
 ## Contributors
 
 * **Baziq Khan**
+* * **Noman Ahmed**
+* * **Insha Khan**
 * **Ahab Ali**
-* **Noman Ahmed**
-* **Insha Khan**
